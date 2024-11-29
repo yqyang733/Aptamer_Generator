@@ -4,6 +4,8 @@ import random
 from concurrent.futures import ProcessPoolExecutor
 from pymol import cmd
 
+log = open("log", "w")
+
 def get_lst(f_in):
 
     with open(f_in) as f:
@@ -28,7 +30,9 @@ def compute_SASA(PDB_FILE):
     # 设置探针半径（通常为1.4 Å）
     probe_radius = 1.4
 
-    print(PDB_FILE)
+    log.write(PDB_FILE+"\n")
+    log.flush()
+
     # 加载PDB文件
     cmd.load(os.path.join(PDB_FILE, PDB_FILE+".cif.gz"), "mol")
     
@@ -60,7 +64,7 @@ def compute_SASA(PDB_FILE):
         # 遍历该链上的每个碱基
         for chain, resid, base_name in residues:
             
-            base_sel = f"{NUCLEIC_SEL} and chain {chain} and resi {resid} and (not backbone)"
+            base_sel = f"{NUCLEIC_SEL} and chain {chain} and resi \{resid} and (not backbone)"
                 
             # 计算碱基的总SASA
             cmd.create("base", base_sel)
@@ -85,7 +89,7 @@ def compute_SASA(PDB_FILE):
             cmd.delete("alpha")
 
             
-            backbone_sel = f"{NUCLEIC_SEL} and chain {chain} and resi {resid} and (backbone)"
+            backbone_sel = f"{NUCLEIC_SEL} and chain {chain} and resi \{resid} and (backbone)"
             
             cmd.create("backb", backbone_sel)
             sasa_backbone = cmd.get_area(selection="backb", load_b=1)
@@ -117,7 +121,7 @@ def main():
 
     file_in = sys.argv[1]
     all_cif_lst = get_lst(file_in)
-    random.shuffle(all_cif_lst)
+    # random.shuffle(all_cif_lst)
     with ProcessPoolExecutor(max_workers=12) as executor:
         executor.map(compute_SASA, all_cif_lst)  # 并行执行任务
 
