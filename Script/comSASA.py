@@ -30,11 +30,15 @@ def compute_SASA(PDB_FILE):
     # 设置探针半径（通常为1.4 Å）
     probe_radius = 1.4
 
-    log.write(PDB_FILE+"\n")
+    log.write(PDB_FILE+": ")
     log.flush()
 
     # 加载PDB文件
-    cmd.load(os.path.join(PDB_FILE, PDB_FILE+".cif.gz"), "mol")
+    try:
+        cmd.load(os.path.join(PDB_FILE, PDB_FILE+".cif.gz"), "mol")
+        log.write("load success!\n")
+    except:
+        log.write("load fail!\n")
     
     # 获取所有核酸链信息
     nucleic_chains = cmd.get_chains(NUCLEIC_SEL)
