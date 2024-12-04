@@ -29,16 +29,15 @@ def compute_SASA(PDB_FILE):
     OUTPUT_FILE_backbone = "backbone_sasa.csv"
     # 设置探针半径（通常为1.4 Å）
     probe_radius = 1.4
-
-    log.write(PDB_FILE+": ")
-    log.flush()
-
+    
     # 加载PDB文件
     try:
         cmd.load(os.path.join(PDB_FILE, PDB_FILE+".cif.gz"), "mol")
-        log.write("load success!\n")
+        log.write(PDB_FILE+": load success!\n")
+        log.flush()
     except:
-        log.write("load fail!\n")
+        log.write(PDB_FILE+": load fail!\n")
+        log.flush()
     
     # 获取所有核酸链信息
     nucleic_chains = cmd.get_chains(NUCLEIC_SEL)
