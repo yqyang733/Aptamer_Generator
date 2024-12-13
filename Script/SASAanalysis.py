@@ -133,10 +133,20 @@ def compute_distribution(arr, m):
 
     return bin_centers, np.array(log_hist_final, dtype=np.float32)
 
+def generate_range(n, interval):
+    # 计算下界和上界
+    lower_bound = (n // interval) * interval
+    upper_bound = lower_bound + interval
+    
+    # 生成范围
+    return list(range(0, np.int32(upper_bound + interval), interval))
+
 def plot_scatter(f_in):
 
-    import seaborn as sns
+    # import seaborn as sns
     import matplotlib.pyplot as plt
+
+    bins = 20
 
     back = []
     base = []
@@ -152,8 +162,18 @@ def plot_scatter(f_in):
     back = np.array(back, dtype=np.float32)
     base = np.array(base, dtype=np.float32)
 
-    top_x, top_y = compute_distribution(back, 100)
-    right_x, right_y = compute_distribution(base, 100)
+    top_x, top_y = compute_distribution(back, bins)
+    right_x, right_y = compute_distribution(base, bins)
+
+    width_top = np.max(back)/bins
+    print("width_top", width_top)
+    heigh = np.max(base)/bins
+    print("heigh", heigh)
+
+    topfig_x = generate_range(np.max(back), 10)
+    topfig_y = generate_range(np.max(top_y), 2)
+    rightfig_x = generate_range(np.max(base), 10)
+    rightfig_y = generate_range(np.max(right_y), 2)
 
     border = 0.1
     width = 0.5
@@ -194,23 +214,23 @@ def plot_scatter(f_in):
     p2.set_xticks([])
     p3.set_yticks([])
 
-    p1.scatter(back, base, s=2, alpha=0.9, edgecolors=None)
+    p1.scatter(back, base, s=2, c="#82B0D2", alpha=1, edgecolors=None)
     p1.set_xlabel('Backbone (Buried Percent %)', fontproperties="Arial",fontsize=18,weight="bold")
     p1.set_ylabel('Base  (Buried Percent %)', fontproperties="Arial",fontsize=18,weight="bold")
-    p1.set_xticks([0, 10, 20, 30, 40, 50])
-    p1.set_xticklabels([0, 10, 20, 30, 40, 50],fontname="Arial",rotation=0,fontsize=16,weight="bold")      # size must be after the font.
-    p1.set_yticks([0, 10, 20, 30, 40, 50, 60])
-    p1.set_yticklabels([0, 10, 20, 30, 40, 50, 60],fontname="Arial",fontsize=16,weight="bold")
+    p1.set_xticks(topfig_x)
+    p1.set_xticklabels(topfig_x,fontname="Arial",rotation=0,fontsize=16,weight="bold")      # size must be after the font.
+    p1.set_yticks(rightfig_x)
+    p1.set_yticklabels(rightfig_x,fontname="Arial",fontsize=16,weight="bold")
 
-    p2.bar(top_x,top_y,width=0.5,edgecolor=None,linewidth=0, alpha=1)  
+    p2.bar(top_x,top_y,width=width_top,color="#BEB8DC",edgecolor="black",linewidth=0.3, alpha=0.9)  
     p2.set_ylabel('log(number)', fontproperties="Arial",fontsize=16,weight="bold")
-    p2.set_yticks([0,2,4,6])
-    p2.set_yticklabels([0,2,4,6],fontname="Arial",fontsize=16,weight="bold")
+    p2.set_yticks(topfig_y)
+    p2.set_yticklabels(topfig_y,fontname="Arial",fontsize=16,weight="bold")
 
-    p3.barh(right_x,right_y,height=0.6,edgecolor=None,linewidth=0, alpha=1,)  
+    p3.barh(right_x,right_y,color="#BEB8DC",height=heigh,edgecolor="black",linewidth=0.3, alpha=0.9,)  
     p3.set_xlabel('log(number)', fontproperties="Arial",fontsize=16,weight="bold")
-    p3.set_xticks([0,2,4,6])
-    p3.set_xticklabels([0,2,4,6],fontname="Arial",fontsize=16,weight="bold")
+    p3.set_xticks(rightfig_y)
+    p3.set_xticklabels(rightfig_y,fontname="Arial",fontsize=16,weight="bold")
 
     plt.show()
     fig.savefig('huitu.png')
