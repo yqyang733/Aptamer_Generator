@@ -111,7 +111,7 @@ def compute_SASA(PDB_FILE):
             percent_buried = buried_sasa / (sasa_backbone+0.0000001) * 100
 
             # 写入输出文件，增加碱基名称
-            rt_backbone.write(f"{chain},{resid},{base_name},{sasa_pro:.2f},{sasa_base:.2f},{sasa_backbone_complex:.2f},{buried_sasa:.2f},{percent_buried:.2f}%\n")
+            rt_backbone.write(f"{chain},{resid},{base_name},{sasa_pro:.2f},{sasa_backbone:.2f},{sasa_backbone_complex:.2f},{buried_sasa:.2f},{percent_buried:.2f}%\n")
 
             cmd.delete("beta")
 
